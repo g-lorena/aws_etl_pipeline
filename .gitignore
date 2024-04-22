@@ -1,0 +1,16 @@
+venv
+venv/*
+
+Infra/requirements
+Infra/requirements/*
+
+Infra/.terraform
+Infra/.terraform/*
+
+Infra/lambda_function_extract_data.zip
+Infra/requirements.zip
+
+.DS_Store
+Infra/.terraform.lock.hcl
+Infra/terraform.tfstate.backup
+Infra/terraform.tfstate
