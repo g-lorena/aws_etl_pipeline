@@ -1,8 +1,6 @@
 
 provider "aws" {
   region  = var.aws_region
-  access_key = "AKIAZCP5KEKGRNMCIUPZ"
-  secret_key = "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"
 }   
 
 ### lambda 
