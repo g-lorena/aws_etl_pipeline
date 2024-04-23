@@ -8,6 +8,7 @@ locals {
   bucket_name = "real-estate-etl-101"
   raw_repertory = "raw_data"
   std_repertory = "std_data"
+  aws_region = "eu-west-3"
 
   # layer
   layer_zip_path    = "requirements.zip"

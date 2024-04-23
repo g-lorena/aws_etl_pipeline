@@ -18,6 +18,7 @@ module "lambdaLayer"{
   lambda_layer = local.lambda_layer
   compatible_layer_runtimes = local.compatible_layer_runtimes
   compatible_architectures = local.compatible_layer_runtimes
+
 }
 
 module "lambdaFunction" {
@@ -35,7 +36,7 @@ module "lambdaFunction" {
   bucket_name = local.bucket_name
   raw_repertory = local.raw_repertory
   lambda_layer_arns = [module.lambdaLayer.lamnda_layer_arn]
-
+  aws_region = local.aws_region
   s3_bucket_arn = module.s3bucket.s3_bucket_arn
   
 }
