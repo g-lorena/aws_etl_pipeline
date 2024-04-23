@@ -1,49 +1,56 @@
-import numpy as np
-#import requests
-#from dotenv import load_dotenv
 import os
-
-from datetime import timedelta, datetime
+import json
+import requests
+from pathlib import Path
+from datetime import datetime
+#import boto3
 
 DST_BUCKET = os.environ.get('DST_BUCKET')
 REGION = os.environ.get('REGION')
 RAW_FOLDER = os.environ.get('RAW_FOLDER')
-s3 = boto3.resource('s3', region_name=REGION)
+API_KEY = os.environ.get('API_KEY')
+API_HOST = os.environ.get('API_HOST')
+URL = "https://zillow56.p.rapidapi.com/search"
+QUERY = {"location": "houston, tx"}
+
 
 def lambda_handler(event, context):
-    rapid_api_key = os.environ['API_KEY']
-    rapid_api_host = os.environ['API_HOST']
+    data = fetch_api_data(API_KEY, API_HOST, URL, QUERY)
+    folder_path = f"{RAW_FOLDER}/"
+    timestamp = get_timestamp()
+    file_name = f"api_request_{timestamp}.json"
+    save_json_to_workspace(data, folder_path, file_name)
+    #upload_to_s3(folder_path, DST_BUCKET, file_name)  # Call this method in cloud environment
+
+def fetch_api_data(api_key, api_host, url, query): 
     headers = {
-        "X-RapidAPI-Key": rapid_api_key,
-        "X-RapidAPI-Host": rapid_api_host
+        # mettre api_key et api_host
+        "X-RapidAPI-Key": "ee8d4d9ab3mshbfdc8af6048ab19p12715bjsn3bf8b6f98b0d",
+        "X-RapidAPI-Host": "zillow56.p.rapidapi.com"
     }
-
-    url = "https://zillow56.p.rapidapi.com/search"
-
-    querystring = {"location":"houston, tx"}
-
-
-    response = requests.get(url, headers=headers, params=querystring)
-
-    #print(response.json())
+    response = requests.get(url, headers=headers, params=query)
     
     if response.status_code == 200:
         data = json.loads(response.text)
-        extracted_data = data["results"]
-
-        s3_client = boto3.client('s3')
-        s3_client.put_object(
-            Bucket=DST_BUCKET,
-            Key=f"{RAW_FOLDER}/extract_data.json",
-            Body=json.dumps(extracted_data)
-        )
-
-        return {
-            'statusCode': 200,
-            'body': json.dumps('Data extraction and S3 upload successful!')
-        }
+        return data["results"]
     else:
-        return {
-            'statusCode': response.status_code,
-            'body': json.dumps(f'Error fetching data: {response.text}')
-        }
+        raise Exception(f'Error fetching data: {response.text}')
+
+def save_json_to_workspace(data, folder_path, file_name):
+    # mettre folder_path
+    file_path = Path("/Users/tedsamba/Desktop/GLUE") / file_name
+    with open(file_path, 'w') as file:
+        json.dump(data, file)
+
+def upload_to_s3(folder_path, bucket_name, file_name):
+    s3 = boto3.client('s3', region_name=REGION)
+    file_path = Path(folder_path) / file_name
+    with open(file_path, 'rb') as file:
+        s3.upload_fileobj(file, bucket_name, file_name)
+
+def get_timestamp():  
+    dt = datetime.now()
+    timestamp = str(datetime.timestamp(dt)).replace('.', '_')
+    return timestamp
+
+lambda_handler(None, None)
