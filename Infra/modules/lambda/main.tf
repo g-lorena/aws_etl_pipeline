@@ -71,3 +71,12 @@ resource "aws_lambda_function" "lambda" {
     }
   }
 }
+
+resource "aws_lambda_permission" "s3" {
+  statement_id  = "AllowExecutionFromS3Bucket"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda.arn
+  principal     = "s3.amazonaws.com"
+
+  source_arn = var.s3_bucket_arn
+}

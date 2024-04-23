@@ -1,5 +1,14 @@
 locals {
   
+  #buckets 
+  lambda_layer_bucket_name = "my-lambda-layer-bucket-001"
+  lambda_layer = "lambda_layer"
+  rapid_api_host = "zillow56.p.rapidapi.com"
+  rapid_api_key = "c7d66d4175msh4b730460e56d07dp177281jsn66cc27e2b144"
+  bucket_name = "real-estate-etl-101"
+  raw_repertory = "raw_data"
+  std_repertory = "std_data"
+
   # layer
   layer_zip_path    = "requirements.zip"
   layer_name        = "my_lambda_requirements_layer"

@@ -1,6 +1,44 @@
 
  
+module "s3bucket"{
+  source = "./modules/s3"
 
+  bucket_name = local.bucket_name
+  raw_repertory = local.raw_repertory
+  std_repertory = local.std_repertory
+}
+
+module "lambdaLayer"{
+  source = "./modules/layers"
+
+  requirements_path = local.requirements_path
+  layer_zip_path = local.layer_zip_path
+  layer_name = local.layer_name
+  lambda_layer_bucket_name = local.lambda_layer_bucket_name
+  lambda_layer = local.lambda_layer
+  compatible_layer_runtimes = local.compatible_layer_runtimes
+  compatible_architectures = local.compatible_layer_runtimes
+}
+
+module "lambdaFunction" {
+  source = "./modules/lambda"
+
+  path_to_source_file = local.path_to_source_file
+  path_to_output = local.path_to_output
+  function_name = local.function_name
+  function_handler = local.function_handler
+  memory_size = local.memory_size
+  timeout = local.timeout
+  runtime = local.runtime
+  rapid_api_host = local.rapid_api_host
+  rapid_api_key = local.rapid_api_key
+  bucket_name = local.bucket_name
+  raw_repertory = local.raw_repertory
+  lambda_layer_arns = [module.lambdaLayer.lamnda_layer_arn]
+
+  s3_bucket_arn = module.s3bucket.s3_bucket_arn
+  
+}
 
 
 

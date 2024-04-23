@@ -67,3 +67,8 @@ variable "timeout" {
   description = "Lambda Timeout"
   type        = number
 }
+
+variable "s3_bucket_arn" {
+  description = "lambda_layer_arns"
+  type        = string
+}

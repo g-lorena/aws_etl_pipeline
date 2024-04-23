@@ -1,3 +1,4 @@
+/*
 variable "aws_region" {
     default = "eu-west-3"
     description = "AWS Region to deploy to"
@@ -39,5 +40,5 @@ variable "path_to_data_key" {
 }
 
 
-
+*/
 
