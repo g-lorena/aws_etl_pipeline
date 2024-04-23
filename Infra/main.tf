@@ -1,8 +1,13 @@
 
 provider "aws" {
   region  = var.aws_region
-}   
+}  
 
+
+
+
+
+/*
 ### lambda 
 
 data "aws_iam_policy_document" "lambda_assume_role" {
@@ -17,22 +22,6 @@ data "aws_iam_policy_document" "lambda_assume_role" {
 
     actions = ["sts:AssumeRole"]
   }
-/*
-  statement {
-    sid = "S3FullAccess"
-
-    effect = "Allow"
-
-    actions = [
-      "s3:*"
-    ]
-
-    resources = [
-      "arn:aws:s3:::${var.bucket_name}/",
-      "arn:aws:s3:::${var.bucket_name}/*"
-      ]
-  }
-  */
 }
 
 #define variables
@@ -167,9 +156,9 @@ resource "aws_lambda_permission" "s3" {
 
   source_arn = "arn:aws:s3:::${var.bucket_name}/*"
 }
+#### fin first part 
 
 
-/*
 resource "aws_s3_bucket" "raw_bucket"{
   bucket = aws_s3_bucket.etl_bucket.id
   key    = var.raw_data_key

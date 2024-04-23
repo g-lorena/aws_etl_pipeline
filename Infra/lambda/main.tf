@@ -18,8 +18,6 @@ resource "aws_iam_role" "iam_for_lambda" {
 }
 
 data "aws_iam_policy_document" "lambda_policy" {
-#name        = "lambda_s3"
-#description = "lambda_policy_s3"
 statement {
     effect    = "Allow"
     actions   = ["s3:GetObject","s3:ListBucket"]
