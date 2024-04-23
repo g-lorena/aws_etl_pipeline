@@ -19,3 +19,22 @@ variable "compatible_layer_runtimes" {
   description = "compatible_layer_runtimes"
   type        = list(string)
 }
+
+variable "requirements_path" {
+  description = "paths to the requirements path"
+  type        = string
+}
+
+variable "layer_name" {
+  description = "layer name"
+  type        = string
+}
+
+variable "layer_zip_path" {
+  description = "layer zip path"
+  type        = string
+}
+
+
+
+
