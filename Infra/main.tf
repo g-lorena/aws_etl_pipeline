@@ -1,5 +1,4 @@
 
- 
 module "s3bucket"{
   source = "./modules/s3"
 
@@ -17,7 +16,7 @@ module "lambdaLayer"{
   lambda_layer_bucket_name = local.lambda_layer_bucket_name
   lambda_layer = local.lambda_layer
   compatible_layer_runtimes = local.compatible_layer_runtimes
-  compatible_architectures = local.compatible_layer_runtimes
+  compatible_architectures = local.compatible_architectures
 
 }
 
