@@ -1,4 +1,6 @@
 # create zip file from requirements.txt. Triggers only when the file is updated
+# first method 
+/*
 resource "null_resource" "lambda_layer" {
   triggers = {
     requirements = filesha1(var.requirements_path)
@@ -9,7 +11,12 @@ resource "null_resource" "lambda_layer" {
       set -e
       rm -rf requirements
       mkdir requirements
+      python3 -m venv venv_layer
+      source venv_layer/bin/activate 
       pip3 install -r ${var.requirements_path} -t requirements/
+      cd requirements
+      rm -rf bin
+      rm -rf include
       zip -r ${var.layer_zip_path} requirements/
     EOT
   }
@@ -36,4 +43,24 @@ resource "aws_lambda_layer_version" "my-lambda-layer" {
   compatible_architectures = var.compatible_architectures
   skip_destroy        = true
   depends_on          = [aws_s3_object.lambda_layer_zip] # triggered only if the zip file is uploaded to the bucket
+}
+*/
+
+## second method
+/*
+data "archive_file" "layer" {
+  type        = "zip"
+  source_dir  = var.path_to_request_layer_source
+  output_path = var.path_to_request_layer_artifact
+}
+*/
+
+
+resource "aws_lambda_layer_version" "requests_layer" {
+  filename   = var.path_to_request_layer_filename
+  layer_name = var.request_layer_name
+  source_code_hash    = filebase64sha256(var.path_to_request_layer_filename)
+
+  compatible_runtimes      = var.compatible_layer_runtimes
+  compatible_architectures = var.compatible_architectures
 }

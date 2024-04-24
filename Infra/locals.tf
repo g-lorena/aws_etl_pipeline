@@ -10,10 +10,16 @@ locals {
   std_repertory = "std_data"
   aws_region = "eu-west-3"
 
-  # layer
-  layer_zip_path    = "requirements.zip"
-  layer_name        = "my_lambda_requirements_layer"
-  requirements_path = "../requirements.txt"
+  # first method layer
+  #layer_zip_path    = "requirements.zip"
+  #layer_name        = "my_lambda_requirements_layer"
+  #requirements_path = "../requirements.txt"
+
+  # second method => requests layer
+  request_layer_name = "requests"
+  path_to_request_layer_filename = "../python.zip"
+  #path_to_request_layer_artifact = "./lambda-layer-requests-python3.9-x86_64.zip"
+  #path_to_request_layer_source = "requests"
   
   compatible_layer_runtimes = ["python3.10"]
   compatible_architectures  = ["x86_64"]
