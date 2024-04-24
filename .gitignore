@@ -19,3 +19,15 @@ Infra/requests
 Infra/requests/*
 lambda-layer-requests-python3.9-x86_64.zip
 python.zip
+
+
+Infra/lambda_function_extract_data.zip
+Infra/python.zip
+Infra/requirements.zip
+
+Infra/lambda-layer-requests-python3.9-x86_64.zip
+
+Infra/python
+
+Infra/venv_layer
+
