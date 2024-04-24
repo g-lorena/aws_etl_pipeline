@@ -1,5 +1,4 @@
-import numpy as np
-#import requests
+import requests
 #from dotenv import load_dotenv
 import os
 
