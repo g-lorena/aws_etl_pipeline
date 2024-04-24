@@ -10,16 +10,18 @@ module "s3bucket"{
 module "lambdaLayer"{
   source = "./modules/request_layer"
 
-  #requirements_path = local.requirements_path
-  #layer_zip_path = local.layer_zip_path
-  #layer_name = local.layer_name
-  #lambda_layer_bucket_name = local.lambda_layer_bucket_name
-  #lambda_layer = local.lambda_layer
+  requirements_path = local.requirements_path
+  layer_zip_path = local.layer_zip_path
+  layer_name = local.layer_name
+
+  lambda_layer_bucket_name = local.lambda_layer_bucket_name
+  lambda_layer = local.lambda_layer
 
   #path_to_request_layer_source = local.path_to_request_layer_source
   #path_to_request_layer_artifact = local.path_to_request_layer_artifact
-  path_to_request_layer_filename = local.path_to_request_layer_filename
-  request_layer_name = local.request_layer_name
+  
+  #path_to_request_layer_filename = local.path_to_request_layer_filename
+  #request_layer_name = local.request_layer_name
 
   compatible_layer_runtimes = local.compatible_layer_runtimes
   compatible_architectures = local.compatible_architectures
