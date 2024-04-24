@@ -14,3 +14,8 @@ Infra/requirements.zip
 Infra/.terraform.lock.hcl
 Infra/terraform.tfstate.backup
 Infra/terraform.tfstate
+Infra/lambda-layer-requests-python3.9-x86_64.zip
+Infra/requests
+Infra/requests/*
+lambda-layer-requests-python3.9-x86_64.zip
+python.zip
