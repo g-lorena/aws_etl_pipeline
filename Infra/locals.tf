@@ -11,13 +11,15 @@ locals {
   aws_region = "eu-west-3"
 
   # first method layer
-  #layer_zip_path    = "requirements.zip"
-  #layer_name        = "my_lambda_requirements_layer"
-  #requirements_path = "../requirements.txt"
+  layer_zip_path    = "python.zip"
+  layer_name        = "my_lambda_requirements_layer"
+  requirements_path = "../requirements.txt"
 
   # second method => requests layer
-  request_layer_name = "requests"
-  path_to_request_layer_filename = "../python.zip"
+  
+  #request_layer_name = "requests"
+  #path_to_request_layer_filename = "../python.zip"
+
   #path_to_request_layer_artifact = "./lambda-layer-requests-python3.9-x86_64.zip"
   #path_to_request_layer_source = "requests"
   
