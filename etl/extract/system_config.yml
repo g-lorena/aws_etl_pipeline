@@ -1,0 +1,9 @@
+Workspaces:
+ - !Workspace
+    database: Villes 
+    table_name: houston
+ - !Workspace
+    database: Villes 
+    table_name: pasadena 
+
+
