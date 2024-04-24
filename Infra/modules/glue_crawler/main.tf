@@ -6,4 +6,6 @@ resource "aws_glue_crawler" "ecommerce_crawler" {
   s3_target {
       path = var.s3_target_path
   }
+
+  #schedule = "cron(0 2 * * ? *)"
 }
