@@ -31,3 +31,7 @@ Infra/python
 
 Infra/venv_layer
 
+__pycache__
+
+__pycache__/*
+
