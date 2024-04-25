@@ -5,5 +5,9 @@ Workspaces:
  - !Workspace
     database: Villes 
     table_name: pasadena 
-
-
+- !Workspace
+    database: Villes 
+    table_name: katy 
+- !Workspace
+    database: Villes 
+    table_name: Cypress 
