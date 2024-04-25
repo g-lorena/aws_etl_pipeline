@@ -15,6 +15,8 @@ resource "null_resource" "lambda_layer" {
       pip3 install -r ${var.requirements_path}
       cp -r venv_layer/lib python
       zip -r ${var.layer_zip_path} python/
+      rm -rf venv_layer
+      rm -rf python
     EOT
   }
 }
