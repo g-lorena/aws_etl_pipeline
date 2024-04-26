@@ -26,4 +26,5 @@ resource "aws_s3_object" "glue_script" {
   bucket = aws_s3_bucket.utils_bucket.id
   key    = var.glue_script_key
   source = var.glue_local_script_path
+  etag = filemd5(var.glue_local_script_path)
 }

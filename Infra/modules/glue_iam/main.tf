@@ -13,8 +13,8 @@ data "aws_iam_policy_document" "glue_assume_role" {
 }
 
 resource "aws_iam_role" "iam_for_glue" {
-  name               = "iam_for_lambda"
-  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
+  name               = "iam_for_glue"
+  assume_role_policy = data.aws_iam_policy_document.glue_assume_role.json
 }
 
 data "aws_iam_policy_document" "glue_policy_document" {
