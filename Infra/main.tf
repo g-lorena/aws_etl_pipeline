@@ -5,6 +5,11 @@ module "s3bucket"{
   bucket_name = local.bucket_name
   raw_repertory = local.raw_repertory
   std_repertory = local.std_repertory
+
+  utils_bucket_name = local.utils_bucket
+  glue_script_key = local.glue_script_key
+  glue_local_script_path = local.glue_local_script_path
+
 }
 
 module "lambdaLayer"{
@@ -44,8 +49,57 @@ module "lambdaFunction" {
   raw_repertory = local.raw_repertory
   lambda_layer_arns = [module.lambdaLayer.lamnda_layer_arn]
   aws_region = local.aws_region
-  s3_bucket_arn = module.s3bucket.s3_bucket_arn
+  s3_bucket_arn = module.s3bucket.s3_etl_bucket_arn
   
+}
+
+module "glueCatalogDatabase" {
+  source = "./modules/glue_catalog_database"
+
+  glue_catalog_database_name = local.glue_catalog_database_name
+}
+
+module "glueIamRole" {
+  source = "./modules/glue_iam"
+
+}
+
+module "glueClassifier" {
+  source = "./modules/glue_classifier"
+  classifier_name = local.classifier_name
+  json_path = local.json_path
+
+}
+
+module "glueCrawler" {
+  source = "./modules/glue_crawler"
+
+  database = module.glueCatalogDatabase.database_name
+  name = local.glue_Crawler_Name
+  glue_iam_role = module.glueIamRole.glue_iam_arn
+  
+  classifiers = [module.glueClassifier.aws_glue_classifier_id]
+  s3_target_path = module.s3bucket.aws_s3_bucket_uri
+}
+
+module "glueJob" {
+  source = "./modules/glue_job"
+
+  name = local.glue_job_name
+  iam_glue_arn = module.glueIamRole.glue_iam_arn
+  glue_version = local.glue_version
+  #worker_type = local.worker_type
+  script_location = module.s3bucket.aws_s3_bucket_glue_script_uri
+  timeout = local.time_out
+  class = local.class
+  enable-job-insights = local.enable-job-insights
+  enable-auto-scaling = local.enable-auto-scaling
+  enable-glue-datacatalog = local.enable-glue-datacatalog
+  job-language = local.job-language
+  job-bookmark-option = local.job-bookmark-option
+  datalake-formats = local.datalake-formats
+  conf = local.conf
+
 }
 
 

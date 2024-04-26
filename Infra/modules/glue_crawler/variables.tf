@@ -18,3 +18,7 @@ variable "glue_iam_role" {
   type        = string
 }
 
+variable "classifiers" {
+  description = "classifiers"
+  type        = list(string)
+}
