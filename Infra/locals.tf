@@ -17,17 +17,15 @@ locals {
 
   # first method layer
   layer_zip_path    = "python.zip"
+  utils_bucket = "real-estate-etl-utils"
+  glue_script_key = "script/glue_etl_script.py"
+  glue_local_script_path = "../etl/glue_etl_job/transform_data.py"
+
+
+  # first method layer
+  layer_zip_path    = "python.zip"
   layer_name        = "my_lambda_requirements_layer"
   requirements_path = "../requirements.txt"
-  path_to_system_folder = "../etl/extract/System"
-
-  # second method => requests layer
-  
-  #request_layer_name = "requests"
-  #path_to_request_layer_filename = "../python.zip"
-
-  #path_to_request_layer_artifact = "./lambda-layer-requests-python3.9-x86_64.zip"
-  #path_to_request_layer_source = "requests"
   
   compatible_layer_runtimes = ["python3.10"]
   compatible_architectures  = ["x86_64"]

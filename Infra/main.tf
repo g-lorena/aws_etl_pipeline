@@ -1,4 +1,5 @@
 
+
 module "s3bucket"{
   source = "./modules/s3"
 
@@ -10,9 +11,15 @@ module "s3bucket"{
   glue_script_key = local.glue_script_key
   glue_local_script_path = local.glue_local_script_path
 
+
+  utils_bucket_name = local.utils_bucket
+  glue_script_key = local.glue_script_key
+  glue_local_script_path = local.glue_local_script_path
+
 }
 
 module "lambdaLayer"{
+  source = "./modules/request_layer"
   source = "./modules/request_layer"
 
   requirements_path = local.requirements_path
@@ -23,6 +30,13 @@ module "lambdaLayer"{
 
   lambda_layer_bucket_name = local.lambda_layer_bucket_name
   lambda_layer = local.lambda_layer
+
+  #path_to_request_layer_source = local.path_to_request_layer_source
+  #path_to_request_layer_artifact = local.path_to_request_layer_artifact
+  
+  #path_to_request_layer_filename = local.path_to_request_layer_filename
+  #request_layer_name = local.request_layer_name
+
 
   #path_to_request_layer_source = local.path_to_request_layer_source
   #path_to_request_layer_artifact = local.path_to_request_layer_artifact
