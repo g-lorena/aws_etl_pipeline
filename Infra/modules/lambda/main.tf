@@ -38,7 +38,8 @@ resource "aws_iam_role_policy_attachment" "attach_getObject" {
 
 data "archive_file" "lambda" {
   type        = "zip"
-  source_file = var.path_to_source_file #"../../etl/extract/extract_data.py"
+  source_dir = var.path_to_source_file
+  #source_file = var.path_to_source_file #"../../etl/extract/extract_data.py"
   output_path = var.path_to_output #"lambda_function_extract_data.zip"
 }
 

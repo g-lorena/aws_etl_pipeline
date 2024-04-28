@@ -19,6 +19,8 @@ module "lambdaLayer"{
   layer_zip_path = local.layer_zip_path
   layer_name = local.layer_name
 
+  path_to_system_folder = local.path_to_system_folder
+
   lambda_layer_bucket_name = local.lambda_layer_bucket_name
   lambda_layer = local.lambda_layer
 
@@ -51,6 +53,14 @@ module "lambdaFunction" {
   aws_region = local.aws_region
   s3_bucket_arn = module.s3bucket.s3_etl_bucket_arn
   
+}
+
+module "cloudwatch_schedule_module"{
+  source = "./modules/eventbridge"
+  schedule_name = local.schedule_name
+  schedule_value = local.schedule_value
+  aws_lambda_arn = module.lambdaFunction.lambda_function_arn
+  aws_lambda_function_name = module.lambdaFunction.lambda_function_name
 }
 
 module "glueCatalogDatabase" {

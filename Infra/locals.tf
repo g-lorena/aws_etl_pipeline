@@ -19,6 +19,7 @@ locals {
   layer_zip_path    = "python.zip"
   layer_name        = "my_lambda_requirements_layer"
   requirements_path = "../requirements.txt"
+  path_to_system_folder = "../etl/extract/System"
 
   # second method => requests layer
   
@@ -32,7 +33,7 @@ locals {
   compatible_architectures  = ["x86_64"]
 
   # lambda 
-  path_to_source_file = "../etl/extract/extract_data.py"
+  path_to_source_file = "../etl/extract"
   path_to_output    = "lambda_function_extract_data.zip"
   function_name       = "lambda_extract_fromAPI"
   function_handler    = "extract_data.lambda_handler"
@@ -68,4 +69,7 @@ locals {
   datalake-formats = "iceberg"
   conf = "spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions  --conf spark.sql.catalog.glue_catalog=org.apache.iceberg.spark.SparkCatalog  --conf spark.sql.catalog.glue_catalog.warehouse=s3://tnt-erp-sql/ --conf spark.sql.catalog.glue_catalog.catalog-impl=org.apache.iceberg.aws.glue.GlueCatalog  --conf spark.sql.catalog.glue_catalog.io-impl=org.apache.iceberg.aws.s3.S3FileIO"
   
+  # cloudwatch
+  schedule_name = "schedule"
+  schedule_value = "cron(0 8 ? * MON-FRI *)"
 }

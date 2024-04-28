@@ -33,6 +33,10 @@ variable "lambda_layer"{
   type        = string
 }
 
+variable "path_to_system_folder"{
+  description = "path_to_system_folder"
+  type        = string
+}
 
 /*
 variable "path_to_request_layer_source" {
