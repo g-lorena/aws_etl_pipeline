@@ -1,13 +1,13 @@
 Workspaces:
  - !Workspace
-    database: Villes 
+    database: raw_data 
     table_name: houston
  - !Workspace
-    database: Villes 
+    database: raw_data 
     table_name: pasadena 
-- !Workspace
-    database: Villes 
-    table_name: katy 
-- !Workspace
-    database: Villes 
-    table_name: Cypress 
+# - !Workspace
+#    database: raw_data 
+#    table_name: katy 
+# - !Workspace    
+#    database: raw_data 
+#    table_name: Cypress 

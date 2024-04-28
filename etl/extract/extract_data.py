@@ -19,10 +19,10 @@ API_HOST = os.environ.get('API_HOST')
 URL = "https://zillow56.p.rapidapi.com/search"
 
 #
-country = ["houston","pasadena","katy","Cypress"]
+#country = ["houston","pasadena","katy","Cypress"]
 
 # fonction qui crée les repertoires dans le bucket 
-QUERY = {"location": "houston, tx"}
+#QUERY = {"location": "houston, tx"}
 
 
 def lambda_handler(event, context):
@@ -37,7 +37,7 @@ def lambda_handler(event, context):
     populate_database_table_s3_bucket(DST_BUCKET,date,list_workspace_object)
     
 
-def create_workspace_objects(config_file_path='./extract/system_config.yml'):
+def create_workspace_objects(config_file_path='system_config.yml'):
     local = LocalLocation()
     list_workspace_object = []
     if  os.path.exists(config_file_path):
@@ -64,12 +64,13 @@ def fetch_api_data(url, query):
 
 def create_s3_directories(bucket_name,workspace_object):
     s3 = boto3.client('s3')
-    database_name_s3 = workspace_object.get_database()
+    database_name_s3 = RAW_FOLDER
+    #database_name_s3 = workspace_object.get_database()
     table_name_s3 = workspace_object.get_table_name()
-    database_name_s3_prefix = str(database_name_s3)
+    #database_name_s3_prefix = str(database_name_s3)
     table_name_s3_prefix = str(database_name_s3) + "/" + str(table_name_s3)
     try:
-        s3.put_object(Bucket=bucket_name, Key=(database_name_s3_prefix + '/'))
+        #s3.put_object(Bucket=bucket_name, Key=(database_name_s3_prefix + '/'))
         s3.put_object(Bucket=bucket_name,  Key=(table_name_s3_prefix + '/'))
     except s3.exceptions.ClientError as e:
         if e.response['Error']['Code'] == '404':
@@ -129,7 +130,7 @@ def populate_database_table_local(data,date,list_workspace_object):
             database_name = workspace_object.get_database()
             table_name = workspace_object.get_table_name()
             file_name = f"{table_name}_{date}.json"
-            table_partitioned = pathlib.Path(f"/Users/tedsamba/Desktop/GLUE/{database_name}/{table_name}/{date}")
+            table_partitioned = pathlib.Path(f"/Users/XXX/Desktop/GLUE/{database_name}/{table_name}/{date}")
             table_partitioned.mkdir(parents=True, exist_ok=True)
             with open(table_partitioned / file_name, 'w') as file:
                 json.dump(data, file)
