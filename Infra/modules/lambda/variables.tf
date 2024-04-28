@@ -47,8 +47,13 @@ variable "function_name" {
   description = "Name of Lambda Function"
   type        = string
 }
-
+/*
 variable "path_to_source_file" {
+  description = "Path to Lambda Fucntion Source Code"
+  type        = string
+}
+*/
+variable "path_to_source_folder" {
   description = "Path to Lambda Fucntion Source Code"
   type        = string
 }

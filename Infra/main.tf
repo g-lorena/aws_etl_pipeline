@@ -11,15 +11,9 @@ module "s3bucket"{
   glue_script_key = local.glue_script_key
   glue_local_script_path = local.glue_local_script_path
 
-
-  utils_bucket_name = local.utils_bucket
-  glue_script_key = local.glue_script_key
-  glue_local_script_path = local.glue_local_script_path
-
 }
 
 module "lambdaLayer"{
-  source = "./modules/request_layer"
   source = "./modules/request_layer"
 
   requirements_path = local.requirements_path
@@ -52,7 +46,7 @@ module "lambdaLayer"{
 module "lambdaFunction" {
   source = "./modules/lambda"
 
-  path_to_source_file = local.path_to_source_file
+  path_to_source_folder  = local.path_to_source_folder
   path_to_output = local.path_to_output
   function_name = local.function_name
   function_handler = local.function_handler

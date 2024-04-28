@@ -14,24 +14,19 @@ locals {
   glue_script_key = "script/glue_etl_script.py"
   glue_local_script_path = "../etl/glue_etl_job/transform_data.py"
 
-
-  # first method layer
-  layer_zip_path    = "python.zip"
-  utils_bucket = "real-estate-etl-utils"
-  glue_script_key = "script/glue_etl_script.py"
-  glue_local_script_path = "../etl/glue_etl_job/transform_data.py"
-
-
   # first method layer
   layer_zip_path    = "python.zip"
   layer_name        = "my_lambda_requirements_layer"
   requirements_path = "../requirements.txt"
+
+  path_to_system_folder = "../etl/extract/System"
   
   compatible_layer_runtimes = ["python3.10"]
   compatible_architectures  = ["x86_64"]
 
   # lambda 
-  path_to_source_file = "../etl/extract"
+  path_to_source_folder = "../etl/extract"
+  #path_to_source_file = "../etl/extract"
   path_to_output    = "lambda_function_extract_data.zip"
   function_name       = "lambda_extract_fromAPI"
   function_handler    = "extract_data.lambda_handler"
