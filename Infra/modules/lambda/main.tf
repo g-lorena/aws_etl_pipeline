@@ -15,7 +15,7 @@ data "aws_iam_policy_document" "lambda_assume_role" {
 data "aws_iam_policy_document" "lambda_policy" {
 statement {
     effect    = "Allow"
-    actions   = ["s3:GetObject","s3:ListBucket"]
+    actions   = ["s3:GetObject","s3:ListBucket", "s3:PutObject"]
     resources = ["*"]
   }
 }
