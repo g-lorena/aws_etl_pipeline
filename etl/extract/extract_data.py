@@ -1,5 +1,4 @@
 import requests
-#from dotenv import load_dotenv
 import os
 import json
 import requests
@@ -28,14 +27,14 @@ QUERY = {"location": "houston, tx"}
 
 def lambda_handler(event, context):
     list_workspace_object = create_workspace_objects()
-    bucket_name = 'glue-bucket-11794591'
+    #bucket_name = 'glue-bucket-11794591'
     date = get_time()[1]
     for workspace_object in list_workspace_object:
-        create_s3_directories(bucket_name,workspace_object)
+        create_s3_directories(DST_BUCKET,workspace_object)
     
     #create_directories(workspace_object)
     #populate_database_table_local(data,date,list_workspace_object)
-    populate_database_table_s3_bucket(bucket_name,date,list_workspace_object)
+    populate_database_table_s3_bucket(DST_BUCKET,date,list_workspace_object)
     
 
 def create_workspace_objects(config_file_path='./extract/system_config.yml'):
@@ -52,8 +51,8 @@ def create_workspace_objects(config_file_path='./extract/system_config.yml'):
 def fetch_api_data(url, query): 
     headers = {
         # mettre api_key et api_host
-        "X-RapidAPI-Key": "c7d66d4175msh4b730460e56d07dp177281jsn66cc27e2b144",
-        "X-RapidAPI-Host": "zillow56.p.rapidapi.com"
+        "X-RapidAPI-Key": API_KEY,
+        "X-RapidAPI-Host": API_HOST
     }
     response = requests.get(url, headers=headers, params=query)
     
@@ -79,20 +78,21 @@ def create_s3_directories(bucket_name,workspace_object):
 
 def populate_database_table_s3_bucket(bucket_name,date,list_workspace_object):
     query = None   
-    url = "https://zillow56.p.rapidapi.com/search"
+    #url = URL
 
-    s3 = boto3.client('s3', region_name="eu-west-3") 
+    s3 = boto3.client('s3', region_name=REGION) 
     cpt = 0
     while cpt < len(list_workspace_object):
         try:
             workspace_object = None 
             workspace_object = list_workspace_object[cpt]
-            database_name = workspace_object.get_database()
+            database_name = RAW_FOLDER
+            #database_name = workspace_object.get_database()
             table_name = workspace_object.get_table_name()
             file_name = f"{table_name}_{date}.json"
             query =  {"location": f"{table_name}, tx"}
-            #data = fetch_api_data(url, query)
-            data = {"test":"alla"}
+            data = fetch_api_data(URL, query)
+            #data = {"test":"alla"}
             s3_object_key = f"{database_name}/{table_name}/{date}/{file_name}" 
             # Convert data to a byte stream (assuming it's serializable)
             if isinstance(data, dict):
@@ -113,11 +113,6 @@ def get_time():
     return timestamp,dt.strftime('%Y-%m-%d')
 
 
-
-
-
-
-
 def create_local_directories(workspace_object):
     database_name = workspace_object.get_database()
     table_name = workspace_object.get_table_name()
@@ -127,9 +122,7 @@ def create_local_directories(workspace_object):
     if not os.path.exists(table_dir):
         os.makedirs(table_dir)  # Create the table directory
 
-
-
-
+'''
 def populate_database_table_local(data,date,list_workspace_object):   
     for workspace_object in list_workspace_object:
         try:
@@ -142,8 +135,4 @@ def populate_database_table_local(data,date,list_workspace_object):
                 json.dump(data, file)
         except Exception as e: 
             print(f"Error populating table '{table_name}': {e}")
-
-
-
-
-lambda_handler(None, None)
+'''
