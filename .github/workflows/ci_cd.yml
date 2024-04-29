@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - develop
   pull_request:
 permissions:
       id-token: write # This is required for aws oidc connection
@@ -99,6 +98,5 @@ jobs:
         run: exit 1
 
       - name: Terraform Apply
-        #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: make terraform-apply
