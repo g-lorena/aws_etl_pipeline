@@ -25,6 +25,6 @@ locals {
   function_handler    = "extract_data.lambda_handler"
   memory_size         = 512
   timeout             = 300
-  runtime             = "python3.7"
+  runtime             = "python3.10"
 
 }
