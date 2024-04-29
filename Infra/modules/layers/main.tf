@@ -10,7 +10,7 @@ resource "null_resource" "lambda_layer" {
       rm -rf python
       mkdir python
       python3 -m venv venv_layer
-      source venv_layer/bin/activate 
+      . venv_layer/bin/activate 
       pip3 install -r ${var.requirements_path}
       cp -r venv_layer/lib python
       zip -r ${var.layer_zip_path} python/
