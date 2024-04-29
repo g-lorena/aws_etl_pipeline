@@ -12,3 +12,7 @@ terraform-plan:
 
 terraform-apply:
 	terraform -chdir=$(TERRAFORM_DIR) apply -auto-approve -input=false
+
+terraform-destroy:
+#terraform -chdir=$(TERRAFORM_DIR) destroy -auto-approve
+	terraform -chdir=$(TERRAFORM_DIR) destroy -target module.lambdaLayer.null_resource.lambda_layer -target module.s3bucket.aws_s3_bucket.etl_bucket 
