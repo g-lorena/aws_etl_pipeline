@@ -15,4 +15,4 @@ terraform-apply:
 
 terraform-destroy:
 #terraform -chdir=$(TERRAFORM_DIR) destroy -auto-approve
-	terraform destroy -state=s3://${AWS_BUCKET_NAME}/${AWS_BUCKET_KEY_NAME}
+	terraform destroy -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" -backend-config="region=${AWS_REGION}"
