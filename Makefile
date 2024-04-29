@@ -12,3 +12,6 @@ terraform-plan:
 
 terraform-apply:
 	terraform -chdir=$(TERRAFORM_DIR) apply -auto-approve -input=false
+
+terraform-destroy:
+	terraform -chdir=$(TERRAFORM_DIR) destroy -auto-approve
