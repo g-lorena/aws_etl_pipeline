@@ -9,5 +9,31 @@ resource "aws_glue_crawler" "immo_crawler" {
       path = var.s3_target_path
   }
 
+  
+  /*
+
+├───data = raw_data
+│   ├───bike_data = panamera
+│   │   ├───tbl_bikedata_station
+│   │   └───tbl_bikedata_trip
+│   ├───br_ecommerce = houston
+│   │   ├───tbl_brecommerce_customers
+│   │   ├───tbl_brecommerce_geolocation
+      = zozo
+
+
+  s3_target {
+      path = var.s3_target_path
+  }
+ 
+
+  dynamic "s3_path" {
+    for_each = var.directories
+
+    content {
+      path = 
+    }
+  }
+ */
   #schedule = "cron(0 2 * * ? *)"
 }
