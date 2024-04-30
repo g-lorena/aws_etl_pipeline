@@ -8,6 +8,7 @@ variable "rapid_api_host" {
   description = "Rapid API Host"
   type        = string
   #default     = "zillow56.p.rapidapi.com"
+  #default     = "zillow56.p.rapidapi.com"
 }
 
 variable "aws_region" {
