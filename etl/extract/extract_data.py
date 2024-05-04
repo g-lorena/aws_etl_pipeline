@@ -17,35 +17,48 @@ API_KEY = os.environ.get("API_KEY")
 API_HOST = os.environ.get("API_HOST")
 URL = "https://zillow56.p.rapidapi.com/search"
 
-#
-# country = ["houston","pasadena","katy","Cypress"]
 
-# fonction qui crée les repertoires dans le bucket
-# QUERY = {"location": "houston, tx"}
+# creer la liste des villes
+# country = ["houston", "pasadena", "Katy", "Cypress"]
+country = ["houston", "pasadena"]
+
+s3 = boto3.client("s3", region_name=REGION)
 
 
 def lambda_handler(event, context):
-    list_workspace_object = create_workspace_objects()
-    # bucket_name = 'glue-bucket-11794591'
+    create_s3_directories_based_on_city(s3, DST_BUCKET, country, RAW_FOLDER)
+
     date = get_time()[1]
-    for workspace_object in list_workspace_object:
-        create_s3_directories(DST_BUCKET, workspace_object)
 
-    # create_directories(workspace_object)
-    # populate_database_table_local(data,date,list_workspace_object)
-    populate_database_table_s3_bucket(DST_BUCKET, date, list_workspace_object)
+    populate_database_table_s3_bucket(s3, DST_BUCKET, date, country, RAW_FOLDER)
 
 
-def create_workspace_objects(config_file_path="system_config.yml"):
-    local = LocalLocation()
-    list_workspace_object = []
-    if os.path.exists(config_file_path):
-        list_workspace = local.readConfigFile(config_file_path)
-        for workspace in list_workspace:
-            list_workspace_object.append(
-                Workspace(workspace.database, workspace.table_name)
-            )
-    return list_workspace_object
+# create directories based on city name
+def create_s3_directories_based_on_city(
+    s3, bucket_name, city_name_list, database_name_s3
+):
+
+    for city_name in city_name_list:
+        table_name_s3_prefix = str(database_name_s3) + "/" + str(city_name)
+
+        #  check if s3 object already exists
+        try:
+            s3.head_object(Bucket=bucket_name, Key=table_name_s3_prefix)
+        except s3.exceptions.ClientError as e:
+            if e.response["Error"]["Code"] == "404":
+                # key doesn't exists
+                s3.put_object(Bucket=bucket_name, Key=(table_name_s3_prefix + "/"))
+
+                pass
+        else:
+            # Key exists, do nothing
+            pass
+
+
+def get_time():
+    dt = datetime.now()
+    timestamp = str(datetime.timestamp(dt)).replace(".", "_")
+    return timestamp, dt.strftime("%Y-%m-%d")
 
 
 def fetch_api_data(url, query):
@@ -63,6 +76,42 @@ def fetch_api_data(url, query):
         raise Exception(f"Error fetching data: {response.text}")
 
 
+def populate_database_table_s3_bucket(
+    s3, bucket_name, date, city_name_list, database_name
+):
+
+    try:
+        for table_name in city_name_list:
+            file_name = f"{table_name}_{date}.json"
+            query = {"location": f"{table_name}, tx"}
+            # fetching data
+            data = fetch_api_data(URL, query)
+            s3_object_key = f"{database_name}/{table_name}/{date}/{file_name}"
+            try:
+                s3.put_object(
+                    Bucket=bucket_name, Key=s3_object_key, Body=json.dumps(data)
+                )
+            except ClientError as e:
+                raise Exception(
+                    f"Error uploading data to S3: {e}"
+                ) from e  # Re-raise with more context
+
+    except Exception as e:
+        print(f"Error populating table '{table_name}': {e}")
+
+
+"""
+def create_workspace_objects(config_file_path="system_config.yml"):
+    local = LocalLocation()
+    list_workspace_object = []
+    if os.path.exists(config_file_path):
+        list_workspace = local.readConfigFile(config_file_path)
+        for workspace in list_workspace:
+            list_workspace_object.append(
+                Workspace(workspace.database, workspace.table_name)
+            )
+    return list_workspace_object
+    
 def create_s3_directories(bucket_name, workspace_object):
     s3 = boto3.client("s3")
     database_name_s3 = RAW_FOLDER
@@ -77,12 +126,6 @@ def create_s3_directories(bucket_name, workspace_object):
         if e.response["Error"]["Code"] == "404":
             pass
 
-
-def populate_database_table_s3_bucket(bucket_name, date, list_workspace_object):
-    query = None
-    # url = URL
-
-    s3 = boto3.client("s3", region_name=REGION)
     cpt = 0
     while cpt < len(list_workspace_object):
         try:
@@ -94,9 +137,14 @@ def populate_database_table_s3_bucket(bucket_name, date, list_workspace_object):
             file_name = f"{table_name}_{date}.json"
             query = {"location": f"{table_name}, tx"}
             data = fetch_api_data(URL, query)
-            # data = {"test":"alla"}
-            s3_object_key = f"{database_name}/{table_name}/{date}/{file_name}"
+
+            print(table_name, file_name, query, data)
+            # data = {"test": "alla"}
+            # s3_object_key = f"{database_name}/{table_name}/{date}/{file_name}"
+
             # Convert data to a byte stream (assuming it's serializable)
+
+            
             if isinstance(data, dict):
                 data_bytes = json.dumps(data, ensure_ascii=False).encode("utf-8")
             else:
@@ -108,14 +156,9 @@ def populate_database_table_s3_bucket(bucket_name, date, list_workspace_object):
                 raise Exception(
                     f"Error uploading data to S3: {e}"
                 ) from e  # Re-raise with more context
+            
         except Exception as e:
             print(f"Error populating table '{table_name}': {e}")
-
-
-def get_time():
-    dt = datetime.now()
-    timestamp = str(datetime.timestamp(dt)).replace(".", "_")
-    return timestamp, dt.strftime("%Y-%m-%d")
 
 
 def create_local_directories(workspace_object):
@@ -127,8 +170,6 @@ def create_local_directories(workspace_object):
     if not os.path.exists(table_dir):
         os.makedirs(table_dir)  # Create the table directory
 
-
-"""
 def populate_database_table_local(data,date,list_workspace_object):   
     for workspace_object in list_workspace_object:
         try:

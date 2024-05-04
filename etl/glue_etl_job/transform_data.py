@@ -1,45 +1,62 @@
 import sys
-from awsglue.transforms import *
-from pyspark.sql import functions as F
-from pyspark.sql.functions import col, first, expr
-from awsglue.utils import getResolvedOptions
-from pyspark.context import SparkContext
+
 from awsglue.context import GlueContext
 from awsglue.dynamicframe import DynamicFrame
 from awsglue.job import Job
+from awsglue.transforms import *
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext
+from pyspark.sql import functions as F
+from pyspark.sql.functions import col, expr, first
 
 sc = SparkContext.getOrCreate()
 glueContext = GlueContext(sc)
 spark = glueContext.spark_session
 job = Job(glueContext)
 
-def create_df_froms3():
-    dyf = glueContext.create_dynamic_frame.from_catalog(database='ecommerce-database', table_name='customer')
-    df = dyf.toDF()
+
+def extract_houston_from_catalog(database, houston_table_name):
+    raw_houston_dynamic_frame = glueContext.create_dynamic_frame.from_catalog(
+        database=database, table_name=houston_table_name
+    )
+    df = raw_houston_dynamic_frame.toDF()
     return df
 
-if __name__ == "__main__":
-    df = create_df_froms3()
-    
-    # going from Spark dataframe to glue dynamic frame
-    glue_dynamic_frame = DynamicFrame.fromDF(df, glueContext, "glue_etl")
+
+def extract_pasadena_from_catalog(database, pasadena_table_name):
+    raw_pasadena_dynamic_frame = glueContext.create_dynamic_frame.from_catalog(
+        database=database, table_name=pasadena_table_name
+    )
+    df = raw_pasadena_dynamic_frame.toDF()
+    return df
 
 
-    # load to s3
+def load_to_s3(glue_dynamic_frame):
     s3output = glueContext.getSink(
-    path="s3://cecommerce-etl/report/",
-    connection_type="s3",
-    updateBehavior="UPDATE_IN_DATABASE",
-    partitionKeys=[],
-    compression="snappy",
-    enableUpdateCatalog=True,
-    transformation_ctx="s3output",
+        path="s3://real-estate-etl-101/std_data/",
+        connection_type="s3",
+        updateBehavior="UPDATE_IN_DATABASE",
+        partitionKeys=[],
+        compression="snappy",
+        enableUpdateCatalog=True,
+        transformation_ctx="s3output",
     )
 
     s3output.setCatalogInfo(
-    catalogDatabase="ecommerce-database", catalogTableName="mart"
+        catalogDatabase="ecommerce-database", catalogTableName="mart"
     )
 
     s3output.setFormat("glueparquet")
     s3output.writeFrame(glue_dynamic_frame)
+
+
+if __name__ == "__main__":
+    df_houston = extract_houston_from_catalog()
+
+    df_pasadena = extract_pasadena_from_catalog
+    # going from Spark dataframe to glue dynamic frame
+    glue_dynamic_frame = DynamicFrame.fromDF(df_pasadena, glueContext, "glue_etl")
+
+    # load to s3
+
     job.commit()
