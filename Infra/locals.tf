@@ -4,7 +4,7 @@ locals {
   lambda_layer_bucket_name = "my-lambda-layer-bucket-001"
   lambda_layer = "lambda_layer"
   rapid_api_host = "zillow56.p.rapidapi.com"
-  rapid_api_key = "c7d66d4175msh4b730460e56d07dp177281jsn66cc27e2b144"
+  rapid_api_key = "XXXXX"
   bucket_name = "real-estate-etl-101"
   raw_repertory = "raw_data"
   std_repertory = "std_data"
@@ -41,6 +41,10 @@ locals {
 
   # Glue Crawler
   glue_Crawler_Name = "real_estate_crawler"
+  houston_crawler_name = "real_estate_houston_crawler"
+  panamera_crawler_name = "real_estate_panamera_crawler"
+  houston = "houston"
+  panamera = "pasadena"
 
   # Glue Classifier
   classifier_name = "real_estate_classifier"
@@ -65,4 +69,10 @@ locals {
   # cloudwatch
   schedule_name = "schedule"
   schedule_value = "cron(0 8 ? * MON-FRI *)"
+
+  # Glue Trigger 
+  glue_trigger_name = "realestate-glue-job-trigger"
+  glue_trigger_schedule_type = "SCHEDULED"
+  glue_trigger_schedule_value = "cron(15 12 * * ? *)"
+  
 }

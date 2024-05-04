@@ -8,7 +8,7 @@ resource "aws_glue_job" "immo-glue-job" {
   timeout = var.timeout #2880
 
   command {
-      script_location = var.script_location
+      script_location = "s3://${var.script_location}"
   }
 
   default_arguments = {

@@ -93,11 +93,19 @@ module "glueCrawler" {
   source = "./modules/glue_crawler"
 
   database = module.glueCatalogDatabase.database_name
-  name = local.glue_Crawler_Name
+  houston_crawler_name = local.houston_crawler_name
+  panamera_crawler_name = local.panamera_crawler_name
+
+  houston = local.houston
+  panamera = local.panamera
+
+  #name = local.glue_Crawler_Name
   glue_iam_role = module.glueIamRole.glue_iam_arn
   
   classifiers = [module.glueClassifier.aws_glue_classifier_id]
-  s3_target_path = module.s3bucket.aws_s3_bucket_uri
+  s3_target_path_panamera = module.s3bucket.aws_s3_bucket_uri
+  s3_target_path_houston = module.s3bucket.aws_s3_bucket_uri
+  #s3_target_path = module.s3bucket.aws_s3_bucket_uri
 }
 
 module "glueJob" {
@@ -118,6 +126,15 @@ module "glueJob" {
   datalake-formats = local.datalake-formats
   conf = local.conf
 
+}
+ 
+module "glueTrigger" {
+  source = "./modules/glue_trigger"
+
+  name = local.glue_trigger_name
+  schedule_type = local.glue_trigger_schedule_type
+  schedule_value = local.schedule_value
+  job_name = module.glueJob.aws_glue_job_name
 }
 
 
