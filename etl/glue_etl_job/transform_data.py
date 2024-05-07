@@ -22,13 +22,27 @@ def extract_houston_from_catalog(database, houston_table_name):
     df = raw_houston_dynamic_frame.toDF()
     return df
 
+def drop_columns(df):
+    # drop from table columns with struct type
+    cols = ("listing_sub_type", "open_house_info")
 
-def extract_pasadena_from_catalog(database, pasadena_table_name):
-    raw_pasadena_dynamic_frame = glueContext.create_dynamic_frame.from_catalog(
-        database=database, table_name=pasadena_table_name
+    df_drops= df.drop(*cols)
+    return df_drops
+
+
+def group_data(df):
+    #"group the data by zipcode"
+    df_group = (
+        df.groupBy("zipcode","state","city","country","currency")
+        .agg(
+            F.count("*").alias("Total Zipcodes"),
+            F.avg("bathrooms").alias("avg_bathrooms"),
+            F.avg("bedrooms").alias("avg_bedrooms"),
+            F.mean(col("price") / col("livingArea")).alias("avg_price_per_sqft"),
+        )
+        .orderBy("zipcode")
     )
-    df = raw_pasadena_dynamic_frame.toDF()
-    return df
+    return df_group
 
 
 def load_to_s3(glue_dynamic_frame):
@@ -43,7 +57,7 @@ def load_to_s3(glue_dynamic_frame):
     )
 
     s3output.setCatalogInfo(
-        catalogDatabase="ecommerce-database", catalogTableName="mart"
+        catalogDatabase="real-estate-database", catalogTableName="immo_report"
     )
 
     s3output.setFormat("glueparquet")
@@ -51,12 +65,19 @@ def load_to_s3(glue_dynamic_frame):
 
 
 if __name__ == "__main__":
-    df_houston = extract_houston_from_catalog()
+    database = "real-estate-database"
+    houston_table_name = "immo_houston"
+    df_houston = extract_houston_from_catalog(database, houston_table_name)
+    
+    df_drops = drop_columns(df_houston)
+    
+    df_final = group_data(df_drops)
 
-    df_pasadena = extract_pasadena_from_catalog
     # going from Spark dataframe to glue dynamic frame
-    glue_dynamic_frame = DynamicFrame.fromDF(df_pasadena, glueContext, "glue_etl")
+    
+    glue_dynamic_frame = DynamicFrame.fromDF(df_final, glueContext, "glue_etl")
 
     # load to s3
-
+    load_to_s3(glue_dynamic_frame)
+    
     job.commit()
