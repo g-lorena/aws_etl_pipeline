@@ -11,10 +11,9 @@ resource "null_resource" "lambda_layer" {
       rm -rf python
       mkdir python
       python3 -m venv venv_layer
-      source venv_layer/bin/activate 
+      . venv_layer/bin/activate 
       pip3 install -r ${var.requirements_path}
       cp -r venv_layer/lib python
-      cp -r ${var.path_to_system_folder} python
       zip -r ${var.layer_zip_path} python/
       rm -rf venv_layer
       rm -rf python
@@ -34,16 +33,7 @@ resource "aws_s3_object" "lambda_layer_zip" {
     #content_type = "application/x-directory"  
 }
 
-# create lambda layer from s3 object
-resource "aws_lambda_layer_version" "my-lambda-layer" {
-  s3_bucket           = aws_s3_bucket.lambda_layer_bucket.id
-  s3_key              = aws_s3_object.lambda_layer_zip.key
-  layer_name          = var.layer_name
-  compatible_runtimes = var.compatible_layer_runtimes #["python3.10"]
-  compatible_architectures = var.compatible_architectures
-  skip_destroy        = true
-  depends_on          = [aws_s3_object.lambda_layer_zip] # triggered only if the zip file is uploaded to the bucket
-}
+
 
 
 ## second method

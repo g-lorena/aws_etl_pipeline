@@ -14,26 +14,38 @@ Infra/requirements.zip
 Infra/.terraform.lock.hcl
 Infra/terraform.tfstate.backup
 Infra/terraform.tfstate
-Infra/lambda-layer-requests-python3.9-x86_64.zip
-Infra/requests
-Infra/requests/*
-lambda-layer-requests-python3.9-x86_64.zip
-python.zip
 
+# Local .terraform directories
+**/.terraform/*
 
-Infra/lambda_function_extract_data.zip
-Infra/python.zip
-Infra/requirements.zip
+# .tfstate files
+*.tfstate
+*.tfstate.*
 
-Infra/lambda-layer-requests-python3.9-x86_64.zip
+# Crash log files
+crash.log
+crash.*.log
 
-Infra/python
+# Exclude all .tfvars files, which are likely to contain sensitive data, such as
+# password, private keys, and other secrets. These should not be part of version 
+# control as they are data points which are potentially sensitive and subject 
+# to change depending on the environment.
+*.tfvars
+*.tfvars.json
 
-Infra/venv_layer
+# Ignore override files as they are usually used to override resources locally and so
+# are not checked in
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
 
-__pycache__
+# Include override files you do wish to add to version control using negated pattern
+# !example_override.tf
 
-__pycache__/*
+# Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
+# example: *tfplan*
 
-extract.zip
-
+# Ignore CLI configuration files
+.terraformrc
+terraform.rc
