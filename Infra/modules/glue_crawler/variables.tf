@@ -33,8 +33,6 @@ variable "s3_target_path_panamera" {
   type        = string
 }
 
-
-
 variable "glue_iam_role" {
   description = "glue iam role"
   type        = string
@@ -44,3 +42,5 @@ variable "classifiers" {
   description = "classifiers"
   type        = list(string)
 }
+
+

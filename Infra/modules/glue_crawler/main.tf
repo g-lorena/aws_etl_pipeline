@@ -3,6 +3,7 @@ resource "aws_glue_crawler" "houston_crawler" {
   database_name         = var.database
   role                  = var.glue_iam_role 
   table_prefix          = "immo_" 
+  classifiers = var.classifiers
 
   s3_target {
     path = "${var.s3_target_path_houston}${var.houston}"
@@ -15,6 +16,7 @@ resource "aws_glue_crawler" "panamera_crawler" {
   database_name         = var.database
   role                  = var.glue_iam_role 
   table_prefix          = "immo_" 
+  classifiers = var.classifiers
 
   s3_target {
     path = "${var.s3_target_path_panamera}${var.panamera}"

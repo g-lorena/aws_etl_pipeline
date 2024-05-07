@@ -4,7 +4,7 @@ locals {
   lambda_layer_bucket_name = "my-lambda-layer-bucket-001"
   lambda_layer = "lambda_layer"
   rapid_api_host = "zillow56.p.rapidapi.com"
-  rapid_api_key = "XXXXX"
+  rapid_api_key = "XXXX"
   bucket_name = "real-estate-etl-101"
   raw_repertory = "raw_data"
   std_repertory = "std_data"
