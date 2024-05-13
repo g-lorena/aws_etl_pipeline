@@ -33,6 +33,17 @@ resource "aws_s3_object" "lambda_layer_zip" {
     #content_type = "application/x-directory"  
 }
 
+resource "aws_lambda_layer_version" "requests_layer" {
+  s3_bucket   = aws_s3_bucket.lambda_layer_bucket.id
+  s3_key = aws_s3_object.lambda_layer_zip.key
+  layer_name = var.layer_name
+  #source_code_hash    = filebase64sha256(var.path_to_request_layer_filename)
+
+  compatible_runtimes      = var.compatible_layer_runtimes
+  depends_on = [aws_s3_object.lambda_layer_zip]
+  #compatible_architectures = var.compatible_architectures
+
+}
 
 
 
