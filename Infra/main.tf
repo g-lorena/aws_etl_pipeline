@@ -1,44 +1,138 @@
-
- 
-module "s3bucket"{
+module "s3bucket" {
   source = "./modules/s3"
 
-  bucket_name = local.bucket_name
+  bucket_name   = local.bucket_name
   raw_repertory = local.raw_repertory
   std_repertory = local.std_repertory
+
+  utils_bucket_name      = local.utils_bucket
+  glue_script_key        = local.glue_script_key
+  glue_local_script_path = local.glue_local_script_path
+
 }
 
-module "lambdaLayer"{
-  source = "./modules/layers"
+module "lambdaLayer" {
+  source = "./modules/request_layer"
 
   requirements_path = local.requirements_path
-  layer_zip_path = local.layer_zip_path
-  layer_name = local.layer_name
+  layer_zip_path    = local.layer_zip_path
+  layer_name        = local.layer_name
+
+  path_to_system_folder = local.path_to_system_folder
+
   lambda_layer_bucket_name = local.lambda_layer_bucket_name
-  lambda_layer = local.lambda_layer
+  lambda_layer             = local.lambda_layer
+
+  #path_to_request_layer_source = local.path_to_request_layer_source
+  #path_to_request_layer_artifact = local.path_to_request_layer_artifact
+
+  #path_to_request_layer_filename = local.path_to_request_layer_filename
+  #request_layer_name = local.request_layer_name
+
+
+  #path_to_request_layer_source = local.path_to_request_layer_source
+  #path_to_request_layer_artifact = local.path_to_request_layer_artifact
+
+  #path_to_request_layer_filename = local.path_to_request_layer_filename
+  #request_layer_name = local.request_layer_name
+
   compatible_layer_runtimes = local.compatible_layer_runtimes
-  compatible_architectures = local.compatible_layer_runtimes
+  compatible_architectures  = local.compatible_architectures
 
 }
 
 module "lambdaFunction" {
   source = "./modules/lambda"
 
-  path_to_source_file = local.path_to_source_file
-  path_to_output = local.path_to_output
-  function_name = local.function_name
-  function_handler = local.function_handler
-  memory_size = local.memory_size
-  timeout = local.timeout
-  runtime = local.runtime
-  rapid_api_host = local.rapid_api_host
-  rapid_api_key = local.rapid_api_key
-  bucket_name = local.bucket_name
-  raw_repertory = local.raw_repertory
-  lambda_layer_arns = [module.lambdaLayer.lamnda_layer_arn]
-  aws_region = local.aws_region
-  s3_bucket_arn = module.s3bucket.s3_bucket_arn
-  
+  path_to_source_folder = local.path_to_source_folder
+  path_to_output        = local.path_to_output
+  function_name         = local.function_name
+  function_handler      = local.function_handler
+  memory_size           = local.memory_size
+  timeout               = local.timeout
+  runtime               = local.runtime
+  rapid_api_host        = local.rapid_api_host
+  rapid_api_key         = local.rapid_api_key
+  bucket_name           = local.bucket_name
+  raw_repertory         = local.raw_repertory
+  lambda_layer_arns     = [module.lambdaLayer.lamnda_layer_arn]
+  aws_region            = local.aws_region
+  s3_bucket_arn         = module.s3bucket.s3_etl_bucket_arn
+
+}
+
+module "cloudwatch_schedule_module" {
+  source                   = "./modules/eventbridge"
+  schedule_name            = local.schedule_name
+  schedule_value           = local.schedule_value
+  aws_lambda_arn           = module.lambdaFunction.lambda_function_arn
+  aws_lambda_function_name = module.lambdaFunction.lambda_function_name
+}
+
+module "glueCatalogDatabase" {
+  source = "./modules/glue_catalog_database"
+
+  glue_catalog_database_name = local.glue_catalog_database_name
+}
+
+module "glueIamRole" {
+  source = "./modules/glue_iam"
+
+}
+
+module "glueClassifier" {
+  source          = "./modules/glue_classifier"
+  classifier_name = local.classifier_name
+  json_path       = local.json_path
+
+}
+
+module "glueCrawler" {
+  source = "./modules/glue_crawler"
+
+  database              = module.glueCatalogDatabase.database_name
+  houston_crawler_name  = local.houston_crawler_name
+  panamera_crawler_name = local.panamera_crawler_name
+
+  houston  = local.houston
+  panamera = local.panamera
+
+  #name = local.glue_Crawler_Name
+  glue_iam_role = module.glueIamRole.glue_iam_arn
+
+  classifiers             = [module.glueClassifier.aws_glue_classifier_id]
+  s3_target_path_panamera = module.s3bucket.aws_s3_bucket_uri
+  s3_target_path_houston  = module.s3bucket.aws_s3_bucket_uri
+  #s3_target_path = module.s3bucket.aws_s3_bucket_uri
+}
+
+module "glueJob" {
+  source = "./modules/glue_job"
+
+  name         = local.glue_job_name
+  iam_glue_arn = module.glueIamRole.glue_iam_arn
+  glue_version = local.glue_version
+  #worker_type = local.worker_type
+  script_location         = module.s3bucket.aws_s3_bucket_glue_script_uri
+  timeout                 = local.time_out
+  class                   = local.class
+  enable-job-insights     = local.enable-job-insights
+  enable-auto-scaling     = local.enable-auto-scaling
+  enable-glue-datacatalog = local.enable-glue-datacatalog
+  job-language            = local.job-language
+  job-bookmark-option     = local.job-bookmark-option
+  datalake-formats        = local.datalake-formats
+  conf                    = local.conf
+
+}
+
+module "glueTrigger" {
+  source = "./modules/glue_trigger"
+
+  name           = local.glue_trigger_name
+  schedule_type  = local.glue_trigger_schedule_type
+  schedule_value = local.schedule_value
+  job_name       = module.glueJob.aws_glue_job_name
 }
 
 

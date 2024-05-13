@@ -1,0 +1,13 @@
+Workspaces:
+ - !Workspace
+    database: raw_data 
+    table_name: houston
+ - !Workspace
+    database: raw_data 
+    table_name: pasadena 
+# - !Workspace
+#    database: raw_data 
+#    table_name: katy 
+# - !Workspace    
+#    database: raw_data 
+#    table_name: Cypress 

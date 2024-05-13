@@ -15,7 +15,7 @@ data "aws_iam_policy_document" "lambda_assume_role" {
 data "aws_iam_policy_document" "lambda_policy" {
 statement {
     effect    = "Allow"
-    actions   = ["s3:GetObject","s3:ListBucket"]
+    actions   = ["s3:GetObject","s3:ListBucket", "s3:PutObject"]
     resources = ["*"]
   }
 }
@@ -38,7 +38,8 @@ resource "aws_iam_role_policy_attachment" "attach_getObject" {
 
 data "archive_file" "lambda" {
   type        = "zip"
-  source_file = var.path_to_source_file #"../../etl/extract/extract_data.py"
+  source_dir = var.path_to_source_folder
+  #source_file = var.path_to_source_file #"../../etl/extract/extract_data.py"
   output_path = var.path_to_output #"lambda_function_extract_data.zip"
 }
 
